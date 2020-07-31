@@ -1,53 +1,75 @@
-class Bear{
-    constructor(_id, name, price, description, imageUrl, colors){
-        this._id = _id;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.colors = colors;
+//fonction de création de la page HTML index
+function indexBuild(productsList) {
+    let cardsSection = document.getElementById("cards");
+    for (let product of productsList) {
+        let newCard = document.createElement("article");
+        newCard.innerHTML = `<img src="${product.imageUrl}" width=300px>
+                            <div>
+                                <h3>${product.name}</h3>
+                                <p>${product.description}</p>
+                                <a href="./product.html?id=${product._id}"><div class="btn btn-primary">Voir le produit</div></a>
+                            </div>`;
+
+        cardsSection.appendChild(newCard);
     }
 }
 
-var produits = [];
+//fonction de création de la page HTML product
+function productBuild(product){
+    let productSection = document.getElementById("product");
 
-var request = new XMLHttpRequest();
-request.onreadystatechange = function(){
-    if (this.readyState == XMLHttpRequest.DONE && this.status == 200){
-        var response = JSON.parse(this.responseText);
-        response.forEach(function(data){
-        produits.push(data);
-        });
+    productSection.innerHTML =  `<img src="${product.imageUrl}" width=600px>
+                                <div>
+                                    <h2>${product.name}</h2>
+                                    <p>${product.description}</p>
+                                    <p>Prix : ${product.price / 100}€</p>
+                                    <div>
+                                        <label>Choix des couleurs : </label>
+                                        <select id="productChoices"></select>
+                                    </div>
+                                    <a id="addToCart"><div class="btn btn-primary">Ajouter au panier</div></a>
+                                </div>`;
 
-        for (let i of produits) {
-            var newCard = document.createElement("div");
-            var newPicture = document.createElement("img");
-            var newBodyCard = document.createElement("div");
-            var newTitle = document.createElement("h3");
-            var newDescription = document.createElement("p");
-            var newBtn = document.createElement("div");
-        
-            var newTitleContent = document.createTextNode(i.name);
-            var newDescriptionContent = document.createTextNode(i.description);
-        
-            newTitle.appendChild(newTitleContent);
-            newDescription.appendChild(newDescriptionContent);
-            newBodyCard.appendChild(newTitle);
-            newBodyCard.appendChild(newDescription);            
-            newBodyCard.appendChild(newBtn);
-            newCard.appendChild(newPicture);
-            newCard.appendChild(newBodyCard);
-        
-            var sectionCards = document.getElementById("cards");
-            sectionCards.appendChild(newCard);
-
-            newPicture.setAttribute("src",i.imageUrl);
-            newPicture.setAttribute("width","300px");
-            newBtn.textContent = "Voir le produit";
-            newBtn.classList.add("btn")
-            newBtn.classList.add("btn-primary")
-        }
+    let newColors = document.getElementById("productChoices");
+    for(let choice of product.colors){
+            let newChoice = document.createElement("option");
+            newChoice.innerHTML = choice
+            newChoice.setAttribute("value", choice);
+            newColors.appendChild(newChoice);
     }
-};
-request.open("GET", "http://localhost:3000/api/teddies");
-request.send();
+}
+
+//vérification d'être dans la page index + requête pour récupérer les infos des produits + création de la page index
+if (document.getElementById("cards")) {
+    fetch("http://localhost:3000/api/teddies/")
+    .then(function (response) {
+        if (response.ok) {
+            response.json().then(function (myJson) {
+                indexBuild(myJson);
+            });
+        } else {
+            console.log("Mauvaise réponse du réseau");
+        }
+    })
+    .catch(function (error) {
+        console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
+    });
+}
+
+//vérification d'être dans la page product + requête pour récupérer les infos du produit + création de la page product
+if (document.getElementById("product")) {   
+    let currentProduct = window.location.search.substring(4);
+    fetch("http://localhost:3000/api/teddies/"+currentProduct)
+    .then(function (response) {
+        if (response.ok) {
+            response.json().then(function (myJson) {
+                productBuild(myJson);
+            });
+        } else {
+            console.log("Mauvaise réponse du réseau");
+        }
+    })
+    .catch(function (error) {
+        console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
+    });
+}
