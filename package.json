@@ -1,0 +1,19 @@
+{
+  "name": "orinoco",
+  "version": "1.0.0",
+  "description": "5 ème projet : construisez un site e-commerce.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnthelmeLC/orinoco.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnthelmeLC/orinoco/issues"
+  },
+  "homepage": "https://github.com/AnthelmeLC/orinoco#readme"
+}
