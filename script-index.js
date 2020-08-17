@@ -24,7 +24,7 @@ function productBuild(product){
                                         <h2 class="card-title">${product.name}</h2>
                                         <p class="card-text">${product.description}</p>
                                         <p class="card-text">Prix : ${product.price / 100}€</p>
-                                        <form>
+                                        <form name="actualProduct" id="actualProduct">
                                             <div>
                                                 <label>Choix des couleurs : </label>
                                                 <select id="productChoices"></select>
@@ -33,7 +33,7 @@ function productBuild(product){
                                                 <label>Quantité : </label>
                                                 <input id="productAmount" type="number" name="productAmount" min="1" value="1" required>
                                             </div>
-                                            <button type="button" class="btn btn-primary" id="addToCart">Ajouter au panier</button>
+                                            <button type="submit" class="btn btn-primary" id="addToCart">Ajouter au panier</button>
                                         </form>
                                     </div>
                                 </div>`;
@@ -44,8 +44,9 @@ function productBuild(product){
         newChoice.setAttribute("value", choice);
         newColors.appendChild(newChoice);
     }
-    const addToCart = document.getElementById("addToCart");
-    addToCart.addEventListener("click", function(){
+    const addToCart = document.getElementById("actualProduct");
+    addToCart.addEventListener("submit", function(e){
+        e.preventDefault();
         let inputAmount = parseInt(document.getElementById("productAmount").value);
         if(inputAmount<=0 || isNaN(inputAmount)){
             alert("action impossible");
@@ -69,7 +70,8 @@ function productBuild(product){
                 window.localStorage.setItem(product._id, inputAmount);
                 alert("Produit ajouté au panier");
             }
-        }        
+        }
+        return false;        
     });
 }
 
