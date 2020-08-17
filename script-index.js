@@ -47,16 +47,23 @@ function productBuild(product){
     const addToCart = document.getElementById("addToCart");
     addToCart.addEventListener("click", function(){
         let inputAmount = parseInt(document.getElementById("productAmount").value);
-        if(inputAmount<=0){
+        if(inputAmount<=0 || isNaN(inputAmount)){
             alert("action impossible");
         }
         else{
             if(window.localStorage.getItem(product._id)){
                 const actualAmount = parseInt(window.localStorage.getItem(product._id));
-                inputAmount += actualAmount;
-                window.localStorage.removeItem(product._id);
-                window.localStorage.setItem(product._id,inputAmount);
-                alert("Produit ajouté au panier");
+                if(isNaN(actualAmount || actualAmount<=0)){
+                    window.localStorage.removeItem(product._id);
+                    window.localStorage.setItem(product._id, inputAmount);
+                    alert("Produit ajouté au panier");
+                }
+                else{
+                    inputAmount += actualAmount;
+                    window.localStorage.removeItem(product._id);
+                    window.localStorage.setItem(product._id,inputAmount);
+                    alert("Produit ajouté au panier");
+                }
             }
             else{
                 window.localStorage.setItem(product._id, inputAmount);
@@ -77,26 +84,31 @@ function cartBuild(cartList){
     else{
         for (let product of cartList) {
             if(window.localStorage.getItem(product._id)){
-                const productAmount = parseInt(window.localStorage.getItem(product._id));
-                const newCartProduct = document.createElement("article");
-                newCartProduct.setAttribute("id", product._id);
-                totalPrice += (product.price * productAmount /100);
-                newCartProduct.innerHTML = `<img src="${product.imageUrl}" class="card-img-top">
-                                            <div class="card-body">
-                                                <h3 class="card-title">${product.name}</h3>
-                                                <p class="card-text">Prix unitaire : ${product.price / 100}€</p>
-                                                <p class="card-text">Nombre d'articles : ${productAmount}</p>
-                                                <p class="card-text">Prix du lot : ${product.price * productAmount / 100}€</p>
-                                                <div class="btn btn-primary" id="removeFromCart${product._id}">Retirer du panier</div>
-                                            </div>`;
-                newCartProduct.setAttribute("class", "card")
-                const referenceNode = document.getElementById("resetCart");
-                cartSection.insertBefore(newCartProduct , referenceNode);
-                const removeFromCart = document.getElementById("removeFromCart" + product._id);
-                removeFromCart.addEventListener("click",function(){
+                if(isNaN(parseInt(window.localStorage.getItem(product._id)))){
                     window.localStorage.removeItem(product._id);
-                    window.location.reload(false);
-                })
+                }
+                else{
+                    const productAmount = parseInt(window.localStorage.getItem(product._id));
+                    const newCartProduct = document.createElement("article");
+                    newCartProduct.setAttribute("id", product._id);
+                    totalPrice += (product.price * productAmount /100);
+                    newCartProduct.innerHTML = `<img src="${product.imageUrl}" class="card-img-top">
+                                                <div class="card-body">
+                                                    <h3 class="card-title">${product.name}</h3>
+                                                    <p class="card-text">Prix unitaire : ${product.price / 100}€</p>
+                                                    <p class="card-text">Nombre d'articles : ${productAmount}</p>
+                                                    <p class="card-text">Prix du lot : ${product.price * productAmount / 100}€</p>
+                                                    <div class="btn btn-primary" id="removeFromCart${product._id}">Retirer du panier</div>
+                                                </div>`;
+                    newCartProduct.setAttribute("class", "card")
+                    const referenceNode = document.getElementById("resetCart");
+                    cartSection.insertBefore(newCartProduct , referenceNode);
+                    const removeFromCart = document.getElementById("removeFromCart" + product._id);
+                    removeFromCart.addEventListener("click",function(){
+                        window.localStorage.removeItem(product._id);
+                        window.location.reload(false);
+                    })
+                }
             }
         }
         const totalPriceDiv = document.createElement("p");
@@ -173,58 +185,62 @@ if (document.getElementById("cart")) {
     });
     
     //boutton resetCart
-    const resetCart = document.getElementById("resetCart");
-    resetCart.addEventListener("click",function(){
-        window.localStorage.clear();
-        window.location.reload(false);
-    });
+    if(document.getElementById("resetCart")){
+        const resetCart = document.getElementById("resetCart");
+        resetCart.addEventListener("click",function(){
+            window.localStorage.clear();
+            window.location.reload(false);
+        });
+    }
 
     //boutton order
-    const order = document.getElementById("order");
-    order.addEventListener("submit",function(e){
-        e.preventDefault();
-        if(window.localStorage.length == 0){
-            alert("Commande impossible, panier vide.")
-        }
-        else{
-            //récupération des données du formulaire et des id des produits du panier
-            const form = new FormData(order);
-            let contact = {};
-            for(let key of form.keys()){
-                contact[key] = form.get(key);
+    if(document.getElementById("order")){
+        const order = document.getElementById("order");
+        order.addEventListener("submit",function(e){
+            e.preventDefault();
+            if(window.localStorage.length == 0){
+                alert("Commande impossible, panier vide.")
             }
-            const getProductsId = document.getElementsByTagName("article");
-            let products = [];
-            for(let product of getProductsId){
-                products.push(product.getAttribute("id"));
-            }
-            const options = {
-                headers : {
-                    "Content-type" : "application/json"
-                },
-                method : "POST",
-                body : JSON.stringify({contact : contact, products : products})
-            }
-            //envoi de la commande
-            fetch("http://localhost:3000/api/teddies/order", options)
-            .then(function (response) {
-                if (response.ok) {
-                    response.json().then(function (myJson) {
-                        window.sessionStorage.setItem("orderId" , myJson.orderId);
-                        window.localStorage.clear();
-                        window.location = "file:///K:/Users/Antoine/Documents/formationdevweb/5emeprojet/Orinoco/orinoco/confirmation.html";
-                    })
-                } 
-                else {
-                    console.log("Mauvaise réponse du réseau");
+            else{
+                //récupération des données du formulaire et des id des produits du panier
+                const form = new FormData(order);
+                let contact = {};
+                for(let key of form.keys()){
+                    contact[key] = form.get(key);
                 }
-            })
-            .catch(function (error) {
-                console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
-            });
-        }
-        return false;
-    })
+                const getProductsId = document.getElementsByTagName("article");
+                let products = [];
+                for(let product of getProductsId){
+                    products.push(product.getAttribute("id"));
+                }
+                const options = {
+                    headers : {
+                        "Content-type" : "application/json"
+                    },
+                    method : "POST",
+                    body : JSON.stringify({contact : contact, products : products})
+                }
+                //envoi de la commande
+                fetch("http://localhost:3000/api/teddies/order", options)
+                .then(function (response) {
+                    if (response.ok) {
+                        response.json().then(function (myJson) {
+                            window.sessionStorage.setItem("orderId" , myJson.orderId);
+                            window.localStorage.clear();
+                            window.location = window.location.origin + "/orinoco/confirmation.html";
+                        })
+                    } 
+                    else {
+                        console.log("Mauvaise réponse du réseau");
+                    }
+                })
+                .catch(function (error) {
+                    console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
+                });
+            }
+            return false;
+        })
+    }
 }
 
 //vérification d'être dans la page confirmation + création de la page confirmation
