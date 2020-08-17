@@ -227,7 +227,7 @@ if (document.getElementById("cart")) {
                         response.json().then(function (myJson) {
                             window.sessionStorage.setItem("orderId" , myJson.orderId);
                             window.localStorage.clear();
-                            window.location = "file:///K:/Users/Antoine/Documents/formationdevweb/5emeprojet/Orinoco/orinoco/confirmation.html";
+                            window.location = window.location.origin + "/orinoco/confirmation.html";
                         })
                     } 
                     else {
@@ -247,8 +247,3 @@ if (document.getElementById("cart")) {
 if(document.getElementById("confirmation")){
     confirmationBuild();
 }
-
-
-//vérifier les parsInt (if/else) pour éviter les NaN
-//vérifier les récupérations de données (if/else) pour éviter les null
-//changer l'adresse http de la redirection sur la requête POST
