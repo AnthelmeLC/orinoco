@@ -32,11 +32,11 @@ img{
 }
 
 #product img{
-    width: 650px;
+    max-width: 650px;
 }
 
 #cart img{
-    width: 200px;
+    max-width: 200px;
 }
 
 #clientFormular{
