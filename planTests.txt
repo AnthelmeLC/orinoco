@@ -1,0 +1,95 @@
+Plan de tests du site Orinoco :
+
+ - Vérifier que la fonction de création de la page index créer bien un article pour 1 objet ours
+donné, contenant une image suivie d'une div contenant un h3, un p et un a; 
+Puis pour 2 ours, la page doit contenir les éléments précédent pour chaque ours;
+Puis pour 0 ours, la page doit être vide;
+(test de la fonction indexBuild ligne 2 à 15);
+
+ - Vérifier que la fonction de création de la page product créer bien une div pour 1 objet ours
+donné, contenant une image suivie d'une div contenant un h2, deux p un form contenant une div
+contenant un label et un select puis une autre div contenant un autre label et un input puis
+un bouton submit.
+(test de la fonction productBuild ligne 18 à 38);
+
+ - Vérifier que la balise select créée plus haut contient bien tous les choix possibles de
+couleurs inscrits dans l'objet ours donné;
+(test de la boucle ligne 39 à 45);
+
+ - Vérifier que le bouton submit fonctionne correctement, plusieurs cas à tester : 
+    - ajout du produit en quantité 1 (doit fonctionner);
+    - ajout du produit en quantité 2 (doit fonctionner);
+    - ajout du produit en quantité 0 (ne doit pas fonctionner);
+    - ajout du produit en quantité -1 (ne doit pas fonctionner);
+    - ajout du produit en quantité NaN (ne doit pas fonctionner);
+(test des lignes 46 à 75);
+
+ - Vérifier que la quantité du produit s'ajoute correctement : 
+    - si le produit est déjà dans le panier, les quantités doivent s'additionner;
+    - si le produit n'est pas dans le panier, la quantité doit être celle envoyée par l'utilisateur;
+(test de la condition ligne 54 ET 68);
+
+ - Vérifier la création de la page cart :
+    - si le panier est vide, la page doit contenir un p;
+    - si le panier n'est pas vide : 
+        - pour 1 ours donné, la page doit contenir un article contenant une image, une div contenant
+        trois p et une div bouton;
+        - pour 2 ours, la page doit contenir les éléments précédents pour chaque ours;
+(test de la fonction cartBuild ligne 78 à 113);
+
+ - Vérifier que le calcul du prix du lot est correct : 
+    - pour une quantité de 1 : le prix doit être celui inscrit dans le prix unitaire de l'objet ours;
+    - pour une quantité de 2 : le prix doit être le double de ce lui inscrit dans le prix unitaire de
+    l'objet ours;
+(test du calcul ligne 100);
+
+ - Vérifier que le calcul du prix total de la commande est correct : 
+    - pour une commande de 0 article, le prix doit être 0;
+    - pour une commande de 1 article de quantité 1, le prix doit être celui inscrit dans le prix
+    unitaire de l'objet ours;
+    - pour une commande de 1 article de quantité 2, le prix doit être le double de celui inscrit
+    dans le prix unitaire de l'objet ours;
+    - pour une commande de 2 articles de quantité 1, le prix doit être la somme des prix inscrits
+    dans le prix unitaire de chaque objet ours;
+    - pour une commande de 2 articles de quantité 2, le prix doit être le double de la somme des
+    prix inscrit dans le prix unitaire de chaque objet ours;
+(test de la variable totalPrice ligne 80, 94 et 115 );
+
+ - Vérifier que la fonction de création de la page de confirmation créer bien une div contenant
+trois p.
+(test de la fonction confirmatioBuild ligne 123 à 130);
+
+ - Vérifier que les messages d'erreurs sont corrects lors des requêtes fetch :
+    - si la requête fonctionne et la réponse est bonne, aucun message d'erreur ne doit s'afficher;
+    - si la requête échoue, la console doit afficher "Il y a eu un problème avec l'opération fetch :"
+    suivi du message d'erreur de celle-ci;
+    - si la requête fonctionne mais que la réponse est incorrecte, la console doit afficher "Mauvaise
+    réponse du réseau";
+(test de la gestion des erreurs des requêtes fetch ligne 135 à 148 ET 153 à 165 ET 170 à 182);
+
+ - Vérifier la gestion d'envoi de commande : 
+    - si le panier est vide, et que le formulaire est correctement rempli,un message d'erreur
+    apparaît;
+    - si le panier contient 1 article et que le formulaire est correctement rempli, aucune erreur;
+    - si le panier contient 2 articles et que le formulaire est correctement rempli, aucune erreur;
+    - si le panier contient 1 article et que le formulaire est incorrectement rempli, l'envoie ne 
+    fonctionne pas;
+    si le panier est vide et que le formulaire est incorrectement rempli, l'envoi ne fonctionne pas;
+(test de la fonction submit du panier ligne 194 à 239);
+
+ - Vérifier le bouton pour retirer un article du panier :
+    - si le panier contient 1 article, le boutton doit supprimer l'article et relancer la page sans
+    article, le montant de la commande doit être 0;
+    - si le panier contient 2 articles, le bouton doit supprimer l'article correspondant et relancer
+    la page avec seulement l'autre article, le montant de la commande doit être égal au prix du lot
+    de l'article restant;
+(ligne 106 à 110);
+
+ - Vérifier le bouton pour vider le panier :
+    - si le panier contient 1 article, le bouton doit supprimer l'article et relancer la page sans 
+    article, le montant de la commande doit être 0;
+    - si le panier contient 2 articles, le bouton doit supprimer les deux articles et relancer la
+    page sans article, le montant de la commande doit être 0;
+(ligne 185 à 190);
+
+205 lignes testées sur 233 soit environ 88 %.
