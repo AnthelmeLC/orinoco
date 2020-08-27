@@ -1,6 +1,6 @@
 //fonction de création de la page HTML index
-function indexBuild(productsList) {
-    for (let product of productsList) {
+function indexBuild(productsList){
+    for(let product of productsList){
         const newCard = document.createElement("article");
         newCard.innerHTML = `<img src="${product.imageUrl}" class="card-img-top">
                             <div class="card-body">
@@ -13,7 +13,6 @@ function indexBuild(productsList) {
         cardsSection.appendChild(newCard);
     }
 }
-
 
 //fonction de création de la page HTML product
 function productBuild(product){
@@ -40,7 +39,7 @@ function productBuild(product){
     const newColors = document.getElementById("productChoices");
     for(let choice of product.colors){
         const newChoice = document.createElement("option");
-        newChoice.innerHTML = choice
+        newChoice.innerHTML = choice;
         newChoice.setAttribute("value", choice);
         newColors.appendChild(newChoice);
     }
@@ -48,13 +47,13 @@ function productBuild(product){
     addToCart.addEventListener("submit", function(e){
         e.preventDefault();
         let inputAmount = parseInt(document.getElementById("productAmount").value);
-        if(inputAmount<=0 || isNaN(inputAmount)){
+        if(inputAmount <= 0 || isNaN(inputAmount)){
             alert("action impossible");
         }
         else{
             if(window.localStorage.getItem(product._id)){
                 const actualAmount = parseInt(window.localStorage.getItem(product._id));
-                if(isNaN(actualAmount || actualAmount<=0)){
+                if(isNaN(actualAmount || actualAmount <= 0)){
                     window.localStorage.removeItem(product._id);
                     window.localStorage.setItem(product._id, inputAmount);
                     alert("Produit ajouté au panier");
@@ -62,7 +61,7 @@ function productBuild(product){
                 else{
                     inputAmount += actualAmount;
                     window.localStorage.removeItem(product._id);
-                    window.localStorage.setItem(product._id,inputAmount);
+                    window.localStorage.setItem(product._id, inputAmount);
                     alert("Produit ajouté au panier");
                 }
             }
@@ -75,7 +74,6 @@ function productBuild(product){
     });
 }
 
-
 //fonction de création de la page HTML cart
 function cartBuild(cartList){
     const cartSection = document.getElementById("cart");
@@ -84,7 +82,7 @@ function cartBuild(cartList){
         cartSection.innerHTML = `<p>Votre panier est vide.</p>`;
     }
     else{
-        for (let product of cartList) {
+        for(let product of cartList){
             if(window.localStorage.getItem(product._id)){
                 if(isNaN(parseInt(window.localStorage.getItem(product._id)))){
                     window.localStorage.removeItem(product._id);
@@ -93,7 +91,7 @@ function cartBuild(cartList){
                     const productAmount = parseInt(window.localStorage.getItem(product._id));
                     const newCartProduct = document.createElement("article");
                     newCartProduct.setAttribute("id", product._id);
-                    totalPrice += (product.price * productAmount /100);
+                    totalPrice += (product.price * productAmount / 100);
                     newCartProduct.innerHTML = `<img src="${product.imageUrl}" class="card-img-top">
                                                 <div class="card-body">
                                                     <h3 class="card-title">${product.name}</h3>
@@ -102,11 +100,11 @@ function cartBuild(cartList){
                                                     <p class="card-text">Prix du lot : ${product.price * productAmount / 100}€</p>
                                                     <div class="btn btn-primary" id="removeFromCart${product._id}">Retirer du panier</div>
                                                 </div>`;
-                    newCartProduct.setAttribute("class", "card")
+                    newCartProduct.setAttribute("class", "card");
                     const referenceNode = document.getElementById("resetCart");
-                    cartSection.insertBefore(newCartProduct , referenceNode);
+                    cartSection.insertBefore(newCartProduct, referenceNode);
                     const removeFromCart = document.getElementById("removeFromCart" + product._id);
-                    removeFromCart.addEventListener("click",function(){
+                    removeFromCart.addEventListener("click", function(){
                         window.localStorage.removeItem(product._id);
                         window.location.reload(false);
                     })
@@ -117,7 +115,7 @@ function cartBuild(cartList){
         totalPriceDiv.innerHTML = `Prix total de la commande : ${totalPrice}€`;
         cartSection.appendChild(totalPriceDiv);
         window.sessionStorage.clear();
-        window.sessionStorage.setItem("totalPrice" , totalPrice);
+        window.sessionStorage.setItem("totalPrice", totalPrice);
     }
 }
 
@@ -126,66 +124,63 @@ function confirmationBuild(){
     const newConfirmation = document.createElement("div");
     newConfirmation.innerHTML = `<p>Orinoco vous remercie pour votre commande n°${window.sessionStorage.getItem("orderId")} d'un montant total de ${window.sessionStorage.getItem("totalPrice")}€.</p>
                                 <p>Nous vous en souhaitons bonne réception.</p>
-                                <p>A très bientôt sur notre site!</p>`
+                                <p>A très bientôt sur notre site!</p>`;
     const confirmationSection = document.getElementById("confirmation");
     confirmationSection.appendChild(newConfirmation);
 }
 
 
-
 //vérification d'être dans la page index + requête pour récupérer les infos des produits + création de la page index
-if (document.getElementById("cards")) {
+if(document.getElementById("cards")){
     fetch("http://localhost:3000/api/teddies/")
-    .then(function (response) {
-        if (response.ok) {
-            response.json().then(function (myJson) {
+    .then(function(response){
+        if(response.ok){
+            response.json().then(function(myJson){
                 indexBuild(myJson);
             });
-        } else {
+        }else{
             console.log("Mauvaise réponse du réseau");
         }
     })
-    .catch(function (error) {
+    .catch(function(error){
         console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
     });
 }
-
 
 //vérification d'être dans la page product + requête pour récupérer les infos du produit + création de la page product
-if (document.getElementById("product")) {   
+if(document.getElementById("product")){   
     const currentProduct = window.location.search.substring(4);
-    fetch("http://localhost:3000/api/teddies/"+currentProduct)
-    .then(function (response) {
-        if (response.ok) {
-            response.json().then(function (myJson) {
+    fetch("http://localhost:3000/api/teddies/" + currentProduct)
+    .then(function(response){
+        if(response.ok){
+            response.json().then(function(myJson){
                 productBuild(myJson);
             });
-        } else {
+        }else{
             console.log("Mauvaise réponse du réseau");
         }
     })
-    .catch(function (error) {
+    .catch(function(error){
         console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
     });
 }
 
-
 //vérification d'être dans la page cart + requête pour récupérer les infos des produits + création de la page cart
-if (document.getElementById("cart")) {
+if(document.getElementById("cart")){
     fetch("http://localhost:3000/api/teddies/")
-    .then(function (response) {
-        if (response.ok) {
-            response.json().then(function (myJson) {
+    .then(function (response){
+        if(response.ok){
+            response.json().then(function (myJson){
                 cartBuild(myJson);
             });
-        } else {
-            console.log("Mauvaise réponse du réseau");
+        }else{
+           console.log("Mauvaise réponse du réseau");
         }
     })
-    .catch(function (error) {
+    .catch(function (error){
         console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
     });
-    
+
     //boutton resetCart
     if(document.getElementById("resetCart")){
         const resetCart = document.getElementById("resetCart");
@@ -194,14 +189,14 @@ if (document.getElementById("cart")) {
             window.location.reload(false);
         });
     }
-
+ 
     //boutton order
     if(document.getElementById("order")){
         const order = document.getElementById("order");
-        order.addEventListener("submit",function(e){
+        order.addEventListener("submit", function(e){
             e.preventDefault();
             if(window.localStorage.length == 0){
-                alert("Commande impossible, panier vide.")
+                alert("Commande impossible, panier vide.");
             }
             else{
                 //récupération des données du formulaire et des id des produits du panier
@@ -224,19 +219,19 @@ if (document.getElementById("cart")) {
                 }
                 //envoi de la commande
                 fetch("http://localhost:3000/api/teddies/order", options)
-                .then(function (response) {
-                    if (response.ok) {
-                        response.json().then(function (myJson) {
-                            window.sessionStorage.setItem("orderId" , myJson.orderId);
+                .then(function(response){
+                    if(response.ok){
+                        response.json().then(function(myJson){
+                            window.sessionStorage.setItem("orderId", myJson.orderId);
                             window.localStorage.clear();
                             window.location = window.location.origin + "/orinoco/confirmation.html";
                         })
                     } 
-                    else {
+                    else{
                         console.log("Mauvaise réponse du réseau");
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error){
                     console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
                 });
             }
