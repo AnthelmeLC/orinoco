@@ -189,9 +189,35 @@ if(document.getElementById("cart")){
             window.location.reload(false);
         });
     }
- 
-    //boutton order
+
+    //form et bouton order
     if(document.getElementById("order")){
+
+        //vérification de la saisie de l'utilisateur au moment de celle-ci
+        const inputs = document.getElementsByTagName("input");
+        for(let input of inputs){
+            input.addEventListener("input", function(){
+                if(input.value.length < 3){
+                    input.className = "invalid";
+                }
+                else{
+                    input.className = "valid";
+                }
+            });
+        }
+
+        //vérification de la saisie d'un email conforme
+        const regexEmail = /^\S+@[a-zA-Z]{2,}\.[a-zA-Z]{2,4}$/;
+        const email = document.getElementById("POST-email");
+        email.addEventListener("input", function(){
+            if(!regexEmail.test(email.value)){
+                email.className = "invalid";
+            }
+            else{
+                email.className = "valid";
+            }
+        });
+
         const order = document.getElementById("order");
         order.addEventListener("submit", function(e){
             e.preventDefault();
@@ -199,44 +225,50 @@ if(document.getElementById("cart")){
                 alert("Commande impossible, panier vide.");
             }
             else{
-                //récupération des données du formulaire et des id des produits du panier
-                const form = new FormData(order);
-                let contact = {};
-                for(let key of form.keys()){
-                    contact[key] = form.get(key);
+                if(document.getElementsByClassName("invalid").length > 0){
+                    console.log(document.getElementsByClassName("invalid"));
+                    alert("Commande impossible, veuillez renseigner correctement le formulaire.");
                 }
-                const getProductsId = document.getElementsByTagName("article");
-                let products = [];
-                for(let product of getProductsId){
-                    products.push(product.getAttribute("id"));
-                }
-                const options = {
-                    headers : {
-                        "Content-type" : "application/json"
-                    },
-                    method : "POST",
-                    body : JSON.stringify({contact : contact, products : products})
-                }
-                //envoi de la commande
-                fetch("http://localhost:3000/api/teddies/order", options)
-                .then(function(response){
-                    if(response.ok){
-                        response.json().then(function(myJson){
-                            window.sessionStorage.setItem("orderId", myJson.orderId);
-                            window.localStorage.clear();
-                            window.location = window.location.origin + "/orinoco/confirmation.html";
-                        })
-                    } 
-                    else{
-                        console.log("Mauvaise réponse du réseau");
+                else{
+                    //récupération des données du formulaire et des id des produits du panier
+                    const form = new FormData(order);
+                    let contact = {};
+                    for(let key of form.keys()){
+                        contact[key] = form.get(key);
                     }
-                })
-                .catch(function(error){
-                    console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
-                });
+                    const getProductsId = document.getElementsByTagName("article");
+                    let products = [];
+                    for(let product of getProductsId){
+                        products.push(product.getAttribute("id"));
+                    }
+                    const options = {
+                        headers : {
+                            "Content-type" : "application/json"
+                        },
+                        method : "POST",
+                        body : JSON.stringify({contact : contact, products : products})
+                    }
+                    //envoi de la commande
+                    fetch("http://localhost:3000/api/teddies/order", options)
+                    .then(function(response){
+                        if(response.ok){
+                            response.json().then(function(myJson){
+                                window.sessionStorage.setItem("orderId", myJson.orderId);
+                                window.localStorage.clear();
+                                window.location = window.location.origin + "/orinoco/confirmation.html";
+                            })
+                        } 
+                        else{
+                            console.log("Mauvaise réponse du réseau");
+                        }
+                    })
+                    .catch(function(error){
+                        console.log("il y a eu un problème avec l\'opération fetch: " + error.message);
+                    });
+                }
             }
             return false;
-        })
+        });
     }
 }
 
