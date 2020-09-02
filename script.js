@@ -226,7 +226,6 @@ if(document.getElementById("cart")){
             }
             else{
                 if(document.getElementsByClassName("invalid").length > 0){
-                    console.log(document.getElementsByClassName("invalid"));
                     alert("Commande impossible, veuillez renseigner correctement le formulaire.");
                 }
                 else{
